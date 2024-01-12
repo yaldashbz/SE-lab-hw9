@@ -1,0 +1,36 @@
+version: '3'
+services:
+ db:
+  image: dockerpinata/sqlite:2.0
+  volumes:
+   - .:/dockerpinata/sqlite:2.0
+  networks:
+   - app-network
+
+ api:
+  build: 
+   context: .
+   dockerfile: Dockerfile
+  depends_on:
+   - db
+  volumes:
+   - .:/app
+  ports:
+   - 5000:5000
+  networks:
+   - app-network
+
+ nginx:
+  image: nginx:latest
+  ports:
+   - 80:80
+  volumes:
+   - ./conf.d:/etc/nginx/conf.d
+  networks:
+   - app-network
+  depends_on:
+   - api
+
+networks:
+  app-network:
+    driver: bridge
